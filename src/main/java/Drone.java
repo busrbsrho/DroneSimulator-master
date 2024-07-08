@@ -203,4 +203,9 @@ public class Drone {
 	}
 
 
+	public void commitchecker(){
+		System.out.println("lol");
+	}
+
+
 }
