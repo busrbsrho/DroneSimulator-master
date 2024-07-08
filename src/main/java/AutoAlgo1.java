@@ -119,7 +119,11 @@ public class AutoAlgo1 {
 				setPixel(p.x,p.y,PixelState.blocked);
 				//fineEdges((int)p.x,(int)p.y);
 			}
+
+
 		}
+
+
 	}
 
 	public void updateVisited() {
@@ -266,6 +270,8 @@ public class AutoAlgo1 {
 	private final Set<Point> visitedPoints = new HashSet<>();
 
 	public void ai(int deltaTime) {
+		Random rand = new Random();
+
 		if (!SimulationWindow.toogleAI) {
 			return;
 		}
@@ -288,22 +294,21 @@ public class AutoAlgo1 {
 			CPU.stopAllCPUS();
 		}
 
-		// Check if the drone is above a grayer color (table)
-		Lidar tableLidar=drone.lidars.get(0);
-		if (realmap.isAboveGrayerColor((int) dronePoint.x,(int) dronePoint.y) && drone.barometer.readAltitude()<2) {
-			drone.barometer.setAltitude(drone.barometer.getAltitude() + 0.1); // Increase altitude by 10 units
-		}else if (realmap.isAboveGrayerColor((int) dronePoint.x,(int) dronePoint.y) && drone.barometer.readAltitude()==2){
+		// Adjust altitude based on lidar sensing and grayer area
+		if (drone.lidars.get(0).isSensingGrayerArea() && drone.barometer.readAltitude() < 2) {
+			drone.barometer.setAltitude(drone.barometer.getAltitude() + 0.1); // Increase altitude
+		} else if (realmap.isAboveGrayerColor((int) dronePoint.x, (int) dronePoint.y) && drone.barometer.readAltitude() == 2) {
 			drone.barometer.setAltitude(2);
-		}else {
-			drone.barometer.setAltitude(2);
+		} else if (!drone.lidars.get(0).isSensingGrayerArea() && !realmap.isAboveGrayerColor((int) dronePoint.x, (int) dronePoint.y) && drone.barometer.readAltitude() > 1.1) {
+			drone.barometer.setAltitude(drone.barometer.readAltitude() - 0.1);
 		}
 
-
-
-
 		if (SimulationWindow.return_home) {
-			if (Tools.getDistanceBetweenPoints(getLastPoint(), dronePoint) < max_distance_between_points) {
-				if (points.size() <= 1 && Tools.getDistanceBetweenPoints(getLastPoint(), dronePoint) < max_distance_between_points / 5) {
+			Point lastPoint = getLastPoint();
+			double maxDistanceBetweenPoints = max_distance_between_points + rand.nextGaussian() * max_distance_between_points * 0.1; // Adding some noise
+
+			if (Tools.getDistanceBetweenPoints(lastPoint, dronePoint) < maxDistanceBetweenPoints) {
+				if (points.size() <= 1 && Tools.getDistanceBetweenPoints(lastPoint, dronePoint) < max_distance_between_points / 5) {
 					speedDown();
 					System.out.println("drone is home");
 					drone.battery.setBatteryLifeMinutes(8);
@@ -400,7 +405,6 @@ public class AutoAlgo1 {
 			}
 		}
 	}
-
 
 
 

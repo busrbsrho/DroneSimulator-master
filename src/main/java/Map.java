@@ -1,8 +1,7 @@
 import java.awt.*;
-import java.awt.image.Raster;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -10,6 +9,7 @@ import javax.imageio.ImageIO;
 public class Map {
 	private boolean[][] map;
 	private BufferedImage img_map;
+	private BufferedImage compositeImage;
 	Drone drone;
 	Point drone_start_point;
 	private List<Rectangle> tables = new ArrayList<>();
@@ -19,6 +19,7 @@ public class Map {
 			this.drone_start_point = drone_start_point;
 			img_map = ImageIO.read(new File(path));
 			this.map = render_map_from_image_to_boolean(img_map);
+			createCompositeMap(); // Create the composite image initially
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -49,12 +50,12 @@ public class Map {
 	// Method to add a table (rectangle area)
 	public void addTable(int x, int y, int width, int height) {
 		tables.add(new Rectangle(x, y, width, height));
+		createCompositeMap(); // Update the composite image when a table is added
 	}
 
-
-	public BufferedImage createCompositeMap() {
+	private void createCompositeMap() {
 		// Create a copy of the original image to draw the tables on
-		BufferedImage compositeImage = new BufferedImage(img_map.getWidth(), img_map.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		compositeImage = new BufferedImage(img_map.getWidth(), img_map.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = compositeImage.createGraphics();
 		g2d.drawImage(img_map, 0, 0, null);
 
@@ -64,7 +65,6 @@ public class Map {
 			g2d.fillRect(table.x, table.y, table.width, table.height);
 		}
 		g2d.dispose();
-		return compositeImage;
 	}
 
 	public boolean isAboveGrayerColor(int x, int y) {
@@ -73,8 +73,6 @@ public class Map {
 		y = y + 100;
 
 		// Use the composite image for color detection
-		BufferedImage compositeImage = createCompositeMap();
-
 		if (x >= 0 && x < compositeImage.getWidth() && y >= 0 && y < compositeImage.getHeight()) {
 			int clr = compositeImage.getRGB(x, y);
 			int red = (clr & 0x00ff0000) >> 16;
@@ -83,7 +81,7 @@ public class Map {
 
 			boolean isGrayer = (red >= 100 && red <= 150) && (green >= 100 && green <= 150) && (blue >= 100 && blue <= 150);
 
-			System.out.println("Checking point (" + x + ", " + y + "): R=" + red + ", G=" + green + ", B=" + blue + ", isGrayer=" + isGrayer);
+//			System.out.println("Checking point (" + x + ", " + y + "): R=" + red + ", G=" + green + ", B=" + blue + ", isGrayer=" + isGrayer);
 
 			return isGrayer;
 		} else {
@@ -91,7 +89,6 @@ public class Map {
 		}
 		return false;
 	}
-
 
 	public void paint(Graphics g) {
 		Color c = g.getColor();

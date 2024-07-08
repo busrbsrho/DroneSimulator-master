@@ -42,6 +42,7 @@ public class Lidar {
 	}
 
 	// New method to check if the lidar is sensing a grayer area
+	// New method to check if the lidar is sensing a grayer area
 	public boolean isSensingGrayerArea() {
 		Point actualPointToShoot = drone.getOpticalSensorLocation();
 		double rotation = drone.getRotation() + degrees;
@@ -50,7 +51,7 @@ public class Lidar {
 		while (distanceInCM <= WorldParams.lidarLimit) {
 			Point p = Tools.getPointByDistance(actualPointToShoot, rotation, distanceInCM);
 			if (drone.realMap.isAboveGrayerColor((int) p.x, (int) p.y)) {
-				System.out.println("Lidar sensing grayer area at distance: " + distanceInCM);
+				System.out.println("sensing gray area from lidar at distance: " + distanceInCM + " cm");
 				return true; // Grayer area detected
 			}
 			distanceInCM++;
