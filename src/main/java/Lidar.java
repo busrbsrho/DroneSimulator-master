@@ -50,7 +50,7 @@ public class Lidar {
 		while (distanceInCM <= WorldParams.lidarLimit) {
 			Point p = Tools.getPointByDistance(actualPointToShoot, rotation, distanceInCM);
 			if (drone.realMap.isAboveGrayerColor((int) p.x, (int) p.y)) {
-				System.out.println("sensing gray area from lidar");
+				System.out.println("Lidar sensing grayer area at distance: " + distanceInCM);
 				return true; // Grayer area detected
 			}
 			distanceInCM++;

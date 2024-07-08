@@ -312,6 +312,20 @@ public class SimulationWindow {
 		map.addTable(100, 150, 200, 15);
 		map.addTable(290, 130, 100, 15);
 
+
+
+		// Coordinates to check
+		int[][] coordinates = {
+				{100, 225}, // Table 1
+				{150, 160}, // Table 2
+				{300, 140}  // Table 3
+		};
+
+		for (int[] coord : coordinates) {
+			boolean result = map.isAboveGrayerColor(coord[0] - 92, coord[1] - 100);
+			System.out.println("Is point (" + coord[0] + ", " + coord[1] + ") above a grayer area? " + result);
+		}
+
 		algo1 = new AutoAlgo1(map);
 
 		Painter painter = new Painter(algo1);

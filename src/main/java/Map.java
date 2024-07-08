@@ -1,7 +1,7 @@
+import java.awt.*;
+import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,13 +51,32 @@ public class Map {
 		tables.add(new Rectangle(x, y, width, height));
 	}
 
+
+	public BufferedImage createCompositeMap() {
+		// Create a copy of the original image to draw the tables on
+		BufferedImage compositeImage = new BufferedImage(img_map.getWidth(), img_map.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = compositeImage.createGraphics();
+		g2d.drawImage(img_map, 0, 0, null);
+
+		// Draw the tables on the composite image
+		g2d.setColor(new Color(120, 120, 120)); // Example gray color for tables
+		for (Rectangle table : tables) {
+			g2d.fillRect(table.x, table.y, table.width, table.height);
+		}
+		g2d.dispose();
+		return compositeImage;
+	}
+
 	public boolean isAboveGrayerColor(int x, int y) {
 		// Adjust coordinates
 		x = x + 92;
 		y = y + 100;
 
-		if (x >= 0 && x < img_map.getWidth() && y >= 0 && y < img_map.getHeight()) {
-			int clr = img_map.getRGB(x, y);
+		// Use the composite image for color detection
+		BufferedImage compositeImage = createCompositeMap();
+
+		if (x >= 0 && x < compositeImage.getWidth() && y >= 0 && y < compositeImage.getHeight()) {
+			int clr = compositeImage.getRGB(x, y);
 			int red = (clr & 0x00ff0000) >> 16;
 			int green = (clr & 0x0000ff00) >> 8;
 			int blue = clr & 0x000000ff;

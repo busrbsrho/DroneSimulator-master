@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 
 public class AutoAlgo1 {
-
+	boolean isAboveTable = false;
 	int map_size = 3000;
 	enum PixelState {blocked,explored,unexplored,visited};
 	PixelState map[][];
@@ -201,9 +201,9 @@ public class AutoAlgo1 {
 					if(map[i][j] == PixelState.blocked) {
 						g.setColor(Color.RED);
 					}
-//					else if(map[i][j] == PixelState.explored) {
-//						g.setColor(Color.YELLOW);
-//					}
+					else if(map[i][j] == PixelState.explored) {
+						g.setColor(Color.YELLOW);
+					}
 					else if(map[i][j] == PixelState.visited) {
 						g.setColor(Color.BLUE);
 					}
@@ -289,11 +289,17 @@ public class AutoAlgo1 {
 		}
 
 		// Check if the drone is above a grayer color (table)
-		if (realmap.isAboveGrayerColor((int) dronePoint.x,(int) dronePoint.y)) {
-			drone.barometer.setAltitude(drone.barometer.getAltitude() + 1); // Increase altitude by 10 units
+		Lidar tableLidar=drone.lidars.get(0);
+		if (realmap.isAboveGrayerColor((int) dronePoint.x,(int) dronePoint.y) && drone.barometer.readAltitude()<2) {
+			drone.barometer.setAltitude(drone.barometer.getAltitude() + 0.1); // Increase altitude by 10 units
+		}else if (realmap.isAboveGrayerColor((int) dronePoint.x,(int) dronePoint.y) && drone.barometer.readAltitude()==2){
+			drone.barometer.setAltitude(2);
 		}else {
-			drone.barometer.setAltitude(0.1);
+			drone.barometer.setAltitude(2);
 		}
+
+
+
 
 		if (SimulationWindow.return_home) {
 			if (Tools.getDistanceBetweenPoints(getLastPoint(), dronePoint) < max_distance_between_points) {
