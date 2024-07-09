@@ -350,7 +350,7 @@ public class AutoAlgo1 {
 				if (lidar2.current_distance <= max_risky_distance / 3) {
 					is_risky = true;
 				}
-			}else if (SimulationWindow.simu_2==true) {
+			}else if (SimulationWindow.simu_2==true || SimulationWindow.simu_3==true) {
 
 				Lidar lidar = drone.lidars.get(0);
 				if (lidar.current_distance <= max_risky_distance && !lidar.isSensingGrayerArea()) {
@@ -381,33 +381,8 @@ public class AutoAlgo1 {
 
 
 
-			 else if (SimulationWindow.simu_3==true) {
 
-				Lidar lidar = drone.lidars.get(0);
-				if (lidar.current_distance <= max_risky_distance && !lidar.isSensingGrayerArea()) {
-					is_risky = true;
-					risky_dis = lidar.current_distance;
-				}
 
-				Lidar lidar1 = drone.lidars.get(1);
-				if (lidar1.current_distance <= max_risky_distance / 3&& !lidar1.isSensingGrayerArea()) {
-					is_risky = true;
-				}
-
-				Lidar lidar2 = drone.lidars.get(2);
-				if (lidar2.current_distance <= max_risky_distance / 3&& !lidar2.isSensingGrayerArea()) {
-					is_risky = true;
-				}
-
-				Lidar lidar3 = drone.lidars.get(3);
-				if (lidar2.current_distance <= max_risky_distance / 3&& !lidar3.isSensingGrayerArea()) {
-					is_risky = true;
-				}
-				Lidar lidar4 = drone.lidars.get(4);
-				if (lidar2.current_distance <= max_risky_distance / 3&& !lidar4.isSensingGrayerArea()) {
-					is_risky = true;
-				}
-			}
 
 		} else {
 			if (!try_to_escape) {
