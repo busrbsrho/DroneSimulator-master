@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Drone {
 	private double gyroRotation;
-	public Battery battery=new Battery(8);
+	public Battery battery=new Battery(5);
 	private Point sensorOpticalFlow;
 	private Point pointFromStart;
 	public Point startPoint;
@@ -169,7 +169,7 @@ public class Drone {
 		info += pointFromStart + "<br>";
 		info += "gyroRotation: " + df.format(gyroRotation) + "<br>";
 		info += "sensorOpticalFlow: " + speed*2 + " m/s<br>";
-		info += "Battery: " + battery.getBatteryLife() / 8 * 100 + "<br>";
+		info += "Battery: " + battery.getBatteryLife() / 5 * 100 + "<br>";
 		info += "Barometer: " + barometer.readAltitude() + "<br>";
 		info += "dfront: " + lidars.get(0).current_distance + "<br>";
 		info += "dright: " + lidars.get(1).current_distance + "<br>";

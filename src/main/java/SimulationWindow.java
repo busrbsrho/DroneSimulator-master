@@ -308,9 +308,17 @@ public class SimulationWindow {
 
 		Map map = new Map("Maps/p1" + map_num + ".png",startPoints[map_num-1]);
 		// Adding tables
-		map.addTable(50, 200, 200, 50); // x, y, width, height
-		map.addTable(100, 150, 200, 15);
-		map.addTable(290, 130, 100, 15);
+		map.addTable(202, 115, 20, 50); // x, y, width, height
+		map.addTable(100, 150, 30, 15);
+		map.addTable(200, 115, 60, 15);
+		map.addTable(300, 115, 60, 15);
+		map.addTable(400, 150, 60, 15);
+		map.addTable(192, 330, 15, 60);
+		map.addTable(220, 486, 40, 15);
+		map.addTable(92, 286, 60, 15);
+		map.addTable(92, 286, 60, 15);
+		map.addTable(92, 286, 60, 15);
+
 
 
 

@@ -259,7 +259,7 @@ public class AutoAlgo1 {
 
 	double save_point_after_seconds = 3;
 
-	double max_distance_between_points = 100;
+	double max_distance_between_points = 70;
 
 	boolean start_return_home = false;
 
@@ -286,32 +286,34 @@ public class AutoAlgo1 {
 		}
 
 		Point dronePoint = drone.getOpticalSensorLocation();
-		if (drone.battery.getBatteryLife() / 8 * 100 <= 50) {
+		if (drone.battery.getBatteryLife() / 5 * 100 <= 60) {
 			SimulationWindow.return_home = true;
 		}
 
-		if (drone.battery.getBatteryLife() / 8 * 100 < 0.05) {
+		if (drone.battery.getBatteryLife() / 5 * 100 < 0.05) {
 			CPU.stopAllCPUS();
 		}
 
-		// Adjust altitude based on lidar sensing and grayer area
-		if (drone.lidars.get(0).isSensingGrayerArea() && drone.barometer.readAltitude() < 2) {
-			drone.barometer.setAltitude(drone.barometer.getAltitude() + 0.1); // Increase altitude
-		} else if (realmap.isAboveGrayerColor((int) dronePoint.x, (int) dronePoint.y) && drone.barometer.readAltitude() == 2) {
-			drone.barometer.setAltitude(2);
-		} else if (!drone.lidars.get(0).isSensingGrayerArea() && !realmap.isAboveGrayerColor((int) dronePoint.x, (int) dronePoint.y) && drone.barometer.readAltitude() > 1.1) {
-			drone.barometer.setAltitude(drone.barometer.readAltitude() - 0.1);
+		for (Lidar lidar : drone.lidars) {
+			// Adjust altitude based on lidar sensing and grayer area
+			if (lidar.isSensingGrayerArea() && drone.barometer.readAltitude() < 2) {
+				drone.barometer.setAltitude(drone.barometer.getAltitude() + 0.2); // Increase altitude
+			} else if ((lidar.isSensingGrayerArea() || realmap.isAboveGrayerColor((int) dronePoint.x, (int) dronePoint.y)) && drone.barometer.readAltitude() == 2) {
+				drone.barometer.setAltitude(2);
+			} else if (!lidar.isSensingGrayerArea() && !realmap.isAboveGrayerColor((int) dronePoint.x, (int) dronePoint.y) && drone.barometer.readAltitude() > 1.1) {
+				drone.barometer.setAltitude(drone.barometer.readAltitude() - 0.1);
+			}
 		}
 
 		if (SimulationWindow.return_home) {
 			Point lastPoint = getLastPoint();
-			double maxDistanceBetweenPoints = max_distance_between_points + rand.nextGaussian() * max_distance_between_points * 0.1; // Adding some noise
+			double maxDistanceBetweenPoints = max_distance_between_points + rand.nextGaussian() * max_distance_between_points * 0.06; // Adding some noise
 
 			if (Tools.getDistanceBetweenPoints(lastPoint, dronePoint) < maxDistanceBetweenPoints) {
 				if (points.size() <= 1 && Tools.getDistanceBetweenPoints(lastPoint, dronePoint) < max_distance_between_points / 5) {
 					speedDown();
 					System.out.println("drone is home");
-					drone.battery.setBatteryLifeMinutes(8);
+					drone.battery.setBatteryLifeMinutes(5);
 					SimulationWindow.return_home = false; // Reset return home flag
 					points.clear(); // Clear points to look for new ones
 					is_init = true; // Reinitialize for new points
@@ -330,21 +332,81 @@ public class AutoAlgo1 {
 			}
 		}
 
+
 		if (!is_risky) {
-			Lidar lidar = drone.lidars.get(0);
-			if (lidar.current_distance <= max_risky_distance) {
-				is_risky = true;
-				risky_dis = lidar.current_distance;
+			if (SimulationWindow.simu_1==true) {
+				Lidar lidar = drone.lidars.get(0);
+				if (lidar.current_distance <= max_risky_distance) {
+					is_risky = true;
+					risky_dis = lidar.current_distance;
+				}
+
+				Lidar lidar1 = drone.lidars.get(1);
+				if (lidar1.current_distance <= max_risky_distance / 3) {
+					is_risky = true;
+				}
+
+				Lidar lidar2 = drone.lidars.get(2);
+				if (lidar2.current_distance <= max_risky_distance / 3) {
+					is_risky = true;
+				}
+			}else if (SimulationWindow.simu_2==true) {
+
+				Lidar lidar = drone.lidars.get(0);
+				if (lidar.current_distance <= max_risky_distance && !lidar.isSensingGrayerArea()) {
+					is_risky = true;
+					risky_dis = lidar.current_distance;
+				}
+
+				Lidar lidar1 = drone.lidars.get(1);
+				if (lidar1.current_distance <= max_risky_distance / 3&& !lidar1.isSensingGrayerArea()) {
+					is_risky = true;
+				}
+
+				Lidar lidar2 = drone.lidars.get(2);
+				if (lidar2.current_distance <= max_risky_distance / 3&& !lidar2.isSensingGrayerArea()) {
+					is_risky = true;
+				}
+
+				Lidar lidar3 = drone.lidars.get(3);
+				if (lidar2.current_distance <= max_risky_distance / 3&& !lidar3.isSensingGrayerArea()) {
+					is_risky = true;
+				}
+				Lidar lidar4 = drone.lidars.get(4);
+				if (lidar2.current_distance <= max_risky_distance / 3&& !lidar4.isSensingGrayerArea()) {
+					is_risky = true;
+				}
 			}
 
-			Lidar lidar1 = drone.lidars.get(1);
-			if (lidar1.current_distance <= max_risky_distance / 3) {
-				is_risky = true;
-			}
 
-			Lidar lidar2 = drone.lidars.get(2);
-			if (lidar2.current_distance <= max_risky_distance / 3) {
-				is_risky = true;
+
+
+			 else if (SimulationWindow.simu_3==true) {
+
+				Lidar lidar = drone.lidars.get(0);
+				if (lidar.current_distance <= max_risky_distance && !lidar.isSensingGrayerArea()) {
+					is_risky = true;
+					risky_dis = lidar.current_distance;
+				}
+
+				Lidar lidar1 = drone.lidars.get(1);
+				if (lidar1.current_distance <= max_risky_distance / 3&& !lidar1.isSensingGrayerArea()) {
+					is_risky = true;
+				}
+
+				Lidar lidar2 = drone.lidars.get(2);
+				if (lidar2.current_distance <= max_risky_distance / 3&& !lidar2.isSensingGrayerArea()) {
+					is_risky = true;
+				}
+
+				Lidar lidar3 = drone.lidars.get(3);
+				if (lidar2.current_distance <= max_risky_distance / 3&& !lidar3.isSensingGrayerArea()) {
+					is_risky = true;
+				}
+				Lidar lidar4 = drone.lidars.get(4);
+				if (lidar2.current_distance <= max_risky_distance / 3&& !lidar4.isSensingGrayerArea()) {
+					is_risky = true;
+				}
 			}
 
 		} else {
